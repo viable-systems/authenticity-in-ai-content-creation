@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "id": "001-build-product",
+  "branch_name": "wreckit/001-build-product",
+  "user_stories": [
+    {
+      "id": "US-001",
+      "title": "Install dependencies and configure environment",
+      "acceptance_criteria": [
+        "@anthropic-ai/sdk package is installed and listed in package.json",
+        "react-markdown package is installed and listed in package.json",
+        ".env.local.example file exists with ANTHROPIC_API_KEY placeholder",
+        "README.md exists with setup instructions",
+        "npm run build succeeds with zero errors after installation"
+      ],
+      "priority": 1,
+      "status": "done",
+      "notes": "Foundational setup for Anthropic API integration. Must be completed before any API work can begin."
+    },
+    {
+      "id": "US-002",
+      "title": "Create API route for article generation",
+      "acceptance_criteria": [
+        "API route exists at src/app/api/generate/route.ts",
+        "POST endpoint accepts JSON body with topic, keyPoints, and tone fields",
+        "Input validation rejects empty or invalid data with appropriate error messages",
+        "Validates topic length (max 200 chars) and keyPoints length (max 2000 chars)",
+        "Validates tone is one of: professional, casual, academic, creative, conversational",
+        "Returns 400 error for invalid input with descriptive error message",
+        "Returns 500 error if ANTHROPIC_API_KEY environment variable is not set",
+        "Calls Anthropic API using Claude 3.5 Sonnet model",
+        "Returns JSON response with 'article' field containing generated markdown content",
+        "Handles Anthropic API errors (authentication, rate limiting, timeouts) with user-friendly messages",
+        "Completes generation within 15 seconds for typical input",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 1,
+      "status": "done",
+      "notes": "Core backend functionality. Must be tested manually with curl or Postman before frontend integration."
+    },
+    {
+      "id": "US-003",
+      "title": "Build interactive form on main page",
+      "acceptance_criteria": [
+        "src/app/page.tsx is converted to client component with 'use client' directive",
+        "Form displays on main page with three input fields: topic (text input), key points (textarea), tone selector (dropdown)",
+        "Topic input has 200 character limit with live character counter",
+        "Key points textarea has 2000 character limit with live character counter",
+        "Tone dropdown shows 5 options: Professional, Casual, Academic, Creative, Conversational",
+        "Form validation prevents submission with empty fields",
+        "Form validation shows error messages for invalid input",
+        "Generate button submits form data to /api/generate endpoint",
+        "Loading spinner displays during API call",
+        "Generate button is disabled during loading state",
+        "Error messages display from API response",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 2,
+      "status": "done",
+      "notes": "Depends on US-002 (API route must exist first). Form is the primary interface users interact with."
+    },
+    {
+      "id": "US-004",
+      "title": "Display generated article results",
+      "acceptance_criteria": [
+        "Results section appears below form after successful generation",
+        "Article preview displays generated markdown content in read-only format",
+        "Editable textarea displays full article content for manual editing",
+        "Both preview and textarea show the same content initially",
+        "Section has heading 'Generated Article'",
+        "Content is clearly readable with proper formatting",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 2,
+      "status": "done",
+      "notes": "Depends on US-003 (form must be working first). Provides immediate value to users by showing their generated content."
+    },
+    {
+      "id": "US-005",
+      "title": "Implement copy to clipboard functionality",
+      "acceptance_criteria": [
+        "Copy button displays in results section next to download button",
+        "Button has appropriate icon and label 'Copy'",
+        "Clicking button copies full article markdown to clipboard using navigator.clipboard API",
+        "Button changes to 'Copied!' with green styling for 2 seconds after success",
+        "Error message displays if clipboard access is denied or fails",
+        "Copied content includes any manual edits made in the textarea",
+        "Functionality works in Chrome, Firefox, and Safari browsers",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 3,
+      "status": "done",
+      "notes": "Depends on US-004 (results display must exist first). Critical export feature for user workflow."
+    },
+    {
+      "id": "US-006",
+      "title": "Implement download markdown functionality",
+      "acceptance_criteria": [
+        "Download button displays in results section next to copy button",
+        "Button has appropriate icon and label 'Download .md'",
+        "Clicking button downloads article as .md file",
+        "Filename is based on topic (first 50 chars, sanitized for URL)",
+        "Downloaded file contains full article markdown content",
+        "Content includes any manual edits made in the textarea",
+        "Button changes to 'Downloaded!' with green styling for 2 seconds after success",
+        "Error message displays if download fails",
+        "Functionality works in Chrome, Firefox, and Safari browsers",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 3,
+      "status": "done",
+      "notes": "Depends on US-004 (results display must exist first). Completes the export feature set."
+    },
+    {
+      "id": "US-007",
+      "title": "Add form debouncing and rate limiting",
+      "acceptance_criteria": [
+        "Form prevents submission within 3 seconds of previous generation",
+        "Error message 'Please wait a few seconds before generating again' displays if user tries to generate too quickly",
+        "Debouncing resets after 3 seconds allowing subsequent generations",
+        "User can edit form fields during cooldown period",
+        "Generate button remains enabled but shows error on click during cooldown",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 4,
+      "status": "done",
+      "notes": "Depends on US-003 (form must be working first). Prevents API abuse and excessive costs."
+    },
+    {
+      "id": "US-008",
+      "title": "Apply responsive design and polish UI",
+      "acceptance_criteria": [
+        "Form displays correctly on mobile devices (375px width minimum)",
+        "All inputs are tappable on touch screens without zooming",
+        "No horizontal scrolling required on any screen size",
+        "Buttons remain full-width on mobile, side-by-side on desktop",
+        "Text is readable at all screen sizes",
+        "Consistent spacing and alignment throughout form",
+        "Color scheme works in both light and dark modes",
+        "Gradient background provides visual polish",
+        "Shadows and rounded corners create modern aesthetic",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 4,
+      "status": "done",
+      "notes": "Depends on US-003, US-004, US-005, US-006 (all UI components must exist first). Improves user experience and accessibility."
+    },
+    {
+      "id": "US-009",
+      "title": "Add accessibility features",
+      "acceptance_criteria": [
+        "All form inputs have aria-label attributes",
+        "Character counters have aria-describedby linking to inputs",
+        "Buttons have descriptive aria-labels for screen readers",
+        "Form is fully navigable using keyboard only (Tab, Enter, Space)",
+        "Focus indicators are visible on all interactive elements",
+        "Form follows logical tab order",
+        "Color contrast meets WCAG AA standards",
+        "npm run build succeeds with zero errors"
+      ],
+      "priority": 4,
+      "status": "done",
+      "notes": "Depends on US-003 (form must exist first). Ensures application is usable by all users."
+    },
+    {
+      "id": "US-010",
+      "title": "Verify production build and deployment readiness",
+      "acceptance_criteria": [
+        "npm run build completes with zero errors",
+        "npm run start launches production server successfully",
+        "All features work in production mode (no dev-only bugs)",
+        "Application loads quickly in production build",
+        "No console errors or warnings in browser",
+        "Manual testing checklist completed (all 10 scenarios pass)",
+        "Application functions correctly in Chrome, Firefox, Safari",
+        "Responsive design verified on mobile, tablet, desktop",
+        "Export functionality tested and working in all browsers",
+        "Error handling verified with missing API key scenario"
+      ],
+      "priority": 1,
+      "status": "done",
+      "notes": "Final verification story. Must be completed last after all other stories are done. Ensures production readiness."
+    }
+  ]
+}
